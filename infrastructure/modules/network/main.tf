@@ -15,4 +15,7 @@ resource "aws_subnet" "main-private" {
   vpc_id            = aws_vpc.main.id
   availability_zone = "${var.AWS_REGION}${each.key}"
   cidr_block        = "10.0.${each.value}.0/24"
+  tags = {
+    "Name" = "${var.APP_NAME}-${var.ENV}-subnet-${each.value}"
+  }
 }

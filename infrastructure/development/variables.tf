@@ -4,7 +4,7 @@ variable "AWS_REGION" {
 }
 
 variable "APP_NAME" {
-  default = "gh-terraform-test"
+  default = "gh"
 }
 
 variable "ENV" {
