@@ -9,7 +9,7 @@ resource "aws_vpc" "main" {
   }
 }
 
-resource "aws_subnet" "main-private" {
+resource "aws_subnet" "main-private-subnets" {
   for_each = var.SUBNETS
 
   vpc_id            = aws_vpc.main.id

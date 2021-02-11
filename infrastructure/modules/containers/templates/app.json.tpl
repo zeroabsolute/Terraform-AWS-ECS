@@ -1,0 +1,16 @@
+[
+  {
+    "essential": true,
+    "memory": 256,
+    "name": "ecsapp",
+    "cpu": 256,
+    "image": "${REPOSITORY_URL}:1",
+    "workingDirectory": "/app",
+    "portMappings": [
+        {
+            "containerPort": ${CONTAINER_PORT},
+            "hostPort": ${CONTAINER_PORT}
+        }
+    ]
+  }
+]

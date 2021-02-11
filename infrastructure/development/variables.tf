@@ -10,3 +10,11 @@ variable "APP_NAME" {
 variable "ENV" {
   default = "development"
 }
+
+variable "ECS_AMI_ID" {
+  default = "ami-0f8ee411ba3a66276"
+}
+
+variable "ECS_INSTANCE_TYPE" {
+  default = "t2.micro"
+}
