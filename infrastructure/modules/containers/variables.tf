@@ -42,5 +42,13 @@ variable "ECS_SERVICE_IAM_ROLE" {
 }
 
 variable "ECS_SERVICE_IAM_POLICY_ATTACHMENT" {
+  type = any
+}
+
+variable "ELB_SECURITY_GROUPS" {
+  type = list(string)
+}
+
+variable "EC2_INSTANCE_PROFILE" {
   type = string
 }

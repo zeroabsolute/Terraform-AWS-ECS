@@ -34,7 +34,7 @@ resource "aws_launch_configuration" "launch-config" {
   name                 = "${var.APP_NAME}-${var.ENV}-launch-config"
   image_id             = var.ECS_AMI_ID
   instance_type        = var.ECS_INSTANCE_TYPE
-  iam_instance_profile = aws_iam_instance_profile.ecs-ec2-role.id
+  iam_instance_profile = var.EC2_INSTANCE_PROFILE
   security_groups      = var.ECS_SECURITY_GROUPS
   user_data            = "#!/bin/bash\necho 'ECS_CLUSTER=${var.APP_NAME}-${var.ENV}-ecs-cluster' > /etc/ecs/ecs.config\nstart ecs"
 
@@ -60,9 +60,9 @@ resource "aws_autoscaling_group" "ecs-autoscaling-group" {
 # Task definition 
 
 data "template_file" "task-definition-template" {
-  template = file("templates/app.json.tpl")
+  template = file("${path.module}/templates/app.json.tpl")
   vars = {
-    REPOSITORY_URL = replace(aws_ecr_repository.ecsapp.repository_url, "https://", "")
+    REPOSITORY_URL = replace(aws_ecr_repository.ecr-repository.repository_url, "https://", "")
     CONTAINER_PORT = var.CONTAINER_PORT
   }
 }
@@ -98,7 +98,7 @@ resource "aws_elb" "elb" {
   connection_draining_timeout = 400
 
   subnets         = var.SUBNETS
-  security_groups = var.ELB_SECURITY_GROUP
+  security_groups = var.ELB_SECURITY_GROUPS
 
   tags = {
     Name = "${var.APP_NAME}-${var.ENV}-elb"

@@ -18,3 +18,11 @@ variable "ECS_AMI_ID" {
 variable "ECS_INSTANCE_TYPE" {
   default = "t2.micro"
 }
+
+variable "ECS_CONTAINER_PORT" {
+  default = 5000
+}
+
+variable "ASG_MAX_SIZE" {
+  default = 2
+}
