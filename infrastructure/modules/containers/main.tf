@@ -64,6 +64,7 @@ data "template_file" "task-definition-template" {
   vars = {
     REPOSITORY_URL = replace(aws_ecr_repository.ecr-repository.repository_url, "https://", "")
     CONTAINER_PORT = var.CONTAINER_PORT
+    APP_NAME       = var.APP_NAME
   }
 }
 

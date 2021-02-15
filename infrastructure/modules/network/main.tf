@@ -19,3 +19,30 @@ resource "aws_subnet" "main-private-subnets" {
     "Name" = "${var.APP_NAME}-${var.ENV}-subnet-${each.value}"
   }
 }
+
+resource "aws_internet_gateway" "main-gateway" {
+  vpc_id = aws_vpc.main.id
+
+  tags = {
+    Name = "${var.APP_NAME}-${var.ENV}-vpc-gateway"
+  }
+}
+
+resource "aws_route_table" "main-route-table" {
+  vpc_id = aws_vpc.main.id
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.main-gateway.id
+  }
+
+  tags = {
+    Name = "${var.APP_NAME}-${var.ENV}-main-route-table"
+  }
+}
+
+resource "aws_route_table_association" "table-association" {
+  for_each = aws_subnet.main-private-subnets
+
+  subnet_id      = each.value.id
+  route_table_id = aws_route_table.main-route-table.id
+}

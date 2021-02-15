@@ -2,7 +2,7 @@
   {
     "essential": true,
     "memory": 256,
-    "name": "ecsapp",
+    "name": "${APP_NAME}",
     "cpu": 256,
     "image": "${REPOSITORY_URL}:1",
     "workingDirectory": "/app",
