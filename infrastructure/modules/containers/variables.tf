@@ -52,3 +52,7 @@ variable "ELB_SECURITY_GROUPS" {
 variable "EC2_INSTANCE_PROFILE" {
   type = string
 }
+
+variable "ECS_INSTANCE_KEY_NAME" {
+  type = string
+}

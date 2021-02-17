@@ -9,12 +9,13 @@ resource "aws_vpc" "main" {
   }
 }
 
-resource "aws_subnet" "main-private-subnets" {
+resource "aws_subnet" "main-public-subnets" {
   for_each = var.SUBNETS
 
-  vpc_id            = aws_vpc.main.id
-  availability_zone = "${var.AWS_REGION}${each.key}"
-  cidr_block        = "10.0.${each.value}.0/24"
+  vpc_id                  = aws_vpc.main.id
+  availability_zone       = "${var.AWS_REGION}${each.key}"
+  cidr_block              = "10.0.${each.value}.0/24"
+  map_public_ip_on_launch = "true"
   tags = {
     "Name" = "${var.APP_NAME}-${var.ENV}-subnet-${each.value}"
   }
@@ -41,7 +42,7 @@ resource "aws_route_table" "main-route-table" {
 }
 
 resource "aws_route_table_association" "table-association" {
-  for_each = aws_subnet.main-private-subnets
+  for_each = aws_subnet.main-public-subnets
 
   subnet_id      = each.value.id
   route_table_id = aws_route_table.main-route-table.id

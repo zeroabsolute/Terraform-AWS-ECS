@@ -6,12 +6,13 @@ module "network" {
 }
 
 module "security" {
-  source         = "../modules/security"
-  APP_NAME       = var.APP_NAME
-  ENV            = var.ENV
-  AWS_REGION     = var.AWS_REGION
-  VPC_ID         = module.network.main-vpc-id
-  CONTAINER_PORT = var.ECS_CONTAINER_PORT
+  source          = "../modules/security"
+  APP_NAME        = var.APP_NAME
+  ENV             = var.ENV
+  AWS_REGION      = var.AWS_REGION
+  VPC_ID          = module.network.main-vpc-id
+  CONTAINER_PORT  = var.ECS_CONTAINER_PORT
+  PUBLIC_KEY_PATH = var.PUBLIC_KEY_PATH
 }
 
 module "ecs-service" {
@@ -29,4 +30,5 @@ module "ecs-service" {
   ECS_SERVICE_IAM_POLICY_ATTACHMENT = module.security.ecs-service-attachment
   EC2_INSTANCE_PROFILE              = module.security.ecs-ec2-instance-profile
   ELB_SECURITY_GROUPS               = [module.security.elb-security-group]
+  ECS_INSTANCE_KEY_NAME             = module.security.keypair-name
 }

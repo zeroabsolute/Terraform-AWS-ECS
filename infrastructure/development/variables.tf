@@ -20,7 +20,7 @@ variable "ENV" {
 }
 
 variable "ECS_AMI_ID" {
-  default = "ami-0f8ee411ba3a66276"
+  default = "ami-03201f9d49c2d89f4"
 }
 
 variable "ECS_INSTANCE_TYPE" {
@@ -33,4 +33,8 @@ variable "ECS_CONTAINER_PORT" {
 
 variable "ASG_MAX_SIZE" {
   default = 2
+}
+
+variable "PUBLIC_KEY_PATH" {
+  default = "keypair.pub"
 }

@@ -18,3 +18,7 @@ variable "CONTAINER_PORT" {
   type = number
   default = 5000
 }
+
+variable "PUBLIC_KEY_PATH" {
+  type = string
+}

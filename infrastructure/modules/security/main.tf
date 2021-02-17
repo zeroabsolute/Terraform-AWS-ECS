@@ -141,8 +141,24 @@ resource "aws_security_group" "ecs-security-group" {
     protocol        = "tcp"
     security_groups = [aws_security_group.elb-security-group.id]
   }
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
   tags = {
     Name = "${var.APP_NAME}-${var.ENV}-ecs-sg"
+  }
+}
+
+# Keypairs
+
+resource "aws_key_pair" "keypair" {
+  key_name   = "${var.APP_NAME}-${var.ENV}-keypair"
+  public_key = file(var.PUBLIC_KEY_PATH)
+  lifecycle {
+    ignore_changes = [public_key]
   }
 }

@@ -36,7 +36,8 @@ resource "aws_launch_configuration" "launch-config" {
   instance_type        = var.ECS_INSTANCE_TYPE
   iam_instance_profile = var.EC2_INSTANCE_PROFILE
   security_groups      = var.ECS_SECURITY_GROUPS
-  user_data            = "#!/bin/bash\necho 'ECS_CLUSTER=${var.APP_NAME}-${var.ENV}-ecs-cluster' > /etc/ecs/ecs.config\nstart ecs"
+  key_name             = var.ECS_INSTANCE_KEY_NAME
+  user_data            = "#!/bin/bash\necho 'ECS_CLUSTER=${var.APP_NAME}-${var.ENV}-ecs-cluster' > /etc/ecs/ecs.config"
 
   lifecycle {
     create_before_destroy = true
@@ -52,7 +53,7 @@ resource "aws_autoscaling_group" "ecs-autoscaling-group" {
 
   tag {
     key                 = "Name"
-    value               = "${var.APP_NAME}-${var.ENV}-ecs-ec2-container"
+    value               = "${var.APP_NAME}-${var.ENV}-autoscaling-group"
     propagate_at_launch = true
   }
 }
@@ -69,7 +70,7 @@ data "template_file" "task-definition-template" {
 }
 
 resource "aws_ecs_task_definition" "task-definition" {
-  family                = "ecsapp"
+  family                = var.APP_NAME
   container_definitions = data.template_file.task-definition-template.rendered
 }
 
@@ -89,7 +90,7 @@ resource "aws_elb" "elb" {
     healthy_threshold   = 3
     unhealthy_threshold = 3
     timeout             = 30
-    target              = "HTTP:${var.CONTAINER_PORT}/"
+    target              = "HTTP:${var.CONTAINER_PORT}/health"
     interval            = 60
   }
 
