@@ -15,7 +15,7 @@ output "ecs-ec2-instance-profile" {
 }
 
 output "elb-security-group" {
-  value = aws_security_group.ecs-security-group.id
+  value = aws_security_group.elb-security-group.id
 }
 
 output "keypair-name" {

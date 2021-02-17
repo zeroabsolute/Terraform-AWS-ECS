@@ -6,6 +6,10 @@ variable "ENV" {
   type = string
 }
 
+variable "ECS_CLUSTER_NAME" {
+  type = string
+}
+
 variable "ECS_AMI_ID" {
   type = string
 }

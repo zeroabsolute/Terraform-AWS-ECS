@@ -34,6 +34,7 @@ module "scaling" {
   ECS_SECURITY_GROUPS   = [module.security.ecs-security-group-id]
   EC2_INSTANCE_PROFILE  = module.security.ecs-ec2-instance-profile
   ECS_INSTANCE_KEY_NAME = module.security.keypair-name
+  ECS_CLUSTER_NAME      = module.ecs-service.ecs-cluster-name
 }
 
 # ECR; ECS & tasks

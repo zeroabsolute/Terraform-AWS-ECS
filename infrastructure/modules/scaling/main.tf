@@ -7,7 +7,7 @@ resource "aws_launch_configuration" "launch-config" {
   iam_instance_profile = var.EC2_INSTANCE_PROFILE
   security_groups      = var.ECS_SECURITY_GROUPS
   key_name             = var.ECS_INSTANCE_KEY_NAME
-  user_data            = "#!/bin/bash\necho 'ECS_CLUSTER=${var.APP_NAME}-${var.ENV}-ecs-cluster' > /etc/ecs/ecs.config"
+  user_data            = "#!/bin/bash\necho 'ECS_CLUSTER=${var.ECS_CLUSTER_NAME}' > /etc/ecs/ecs.config"
 
   lifecycle {
     create_before_destroy = true
@@ -37,7 +37,7 @@ resource "aws_alb" "ecs-load-balancer" {
   security_groups = var.ELB_SECURITY_GROUPS
   subnets         = var.SUBNETS
 
-  tags {
+  tags = {
     Name = "${var.APP_NAME}-${var.ENV}-load-balancer"
   }
 }
@@ -45,15 +45,16 @@ resource "aws_alb" "ecs-load-balancer" {
 # ALB target group
 
 resource "aws_alb_target_group" "ecs-target-group" {
-  name     = "${var.APP_NAME}-${var.ENV}-target-group"
-  port     = "80"
-  protocol = "HTTP"
-  vpc_id   = var.VPC_ID
+  name       = "${var.APP_NAME}-${var.ENV}-target-group"
+  port       = "80"
+  protocol   = "HTTP"
+  vpc_id     = var.VPC_ID
+  depends_on = [aws_alb.ecs-load-balancer]
 
   health_check {
     healthy_threshold   = "5"
     unhealthy_threshold = "2"
-    interval            = "30"
+    interval            = "300"
     matcher             = "200"
     path                = "/health"
     port                = "traffic-port"
@@ -61,7 +62,7 @@ resource "aws_alb_target_group" "ecs-target-group" {
     timeout             = "5"
   }
 
-  tags {
+  tags = {
     Name = "${var.APP_NAME}-${var.ENV}-target-group"
   }
 }
