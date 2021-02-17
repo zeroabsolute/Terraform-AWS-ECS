@@ -37,7 +37,7 @@ resource "aws_ecs_service" "ecs-service" {
   depends_on      = [var.ECS_SERVICE_IAM_POLICY_ATTACHMENT]
 
   load_balancer {
-    elb_name       = aws_elb.elb.name
+    target_group_arn  = var.TARGET_GROUP_ARN
     container_name = var.APP_NAME
     container_port = var.CONTAINER_PORT
   }
