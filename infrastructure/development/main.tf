@@ -48,3 +48,11 @@ module "ecs-service" {
   ECS_SERVICE_IAM_POLICY_ATTACHMENT = module.security.ecs-service-attachment
   TARGET_GROUP_ARN                  = module.scaling.target-group-arn
 }
+
+# Buckets & static website serving
+
+module "storage" {
+  source                            = "../modules/storage"
+  APP_NAME                          = var.APP_NAME
+  ENV                               = var.ENV
+}
