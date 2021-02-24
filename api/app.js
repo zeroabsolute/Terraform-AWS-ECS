@@ -23,10 +23,10 @@ pgClient.on('error', () => {
 pgClient.query('CREATE TABLE IF NOT EXISTS books (title varchar(128))')
   .catch((err) => console.log(err));
 
+app.use(Cors());
 app.use(BodyParser.json({ limit: '10mb' }));
 app.use(BodyParser.urlencoded({ limit: '10mb', extended: false }));
 app.use(router);
-app.use(Cors());
 
 router.route('/health').get(
   (_req, res) => {
