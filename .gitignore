@@ -141,3 +141,4 @@ terraform.rc
 .DS_Store
 
 *.csv
+data

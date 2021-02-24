@@ -1,0 +1,44 @@
+version: "3.6"
+
+services:
+
+  # Postgres & adminer
+  postgres:
+    container_name: postgres
+    image: 'postgres:latest'
+    restart: always
+    volumes:
+      - ./data/development/postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345678
+      POSTGRES_DB: dev
+    ports:
+      - "5432:5432"
+  
+  adminer:
+    container_name: adminer
+    image: adminer
+    restart: always
+    ports:
+      - "5433:8080"
+
+  # Node API
+  api:
+    container_name: api
+    depends_on:
+      - postgres
+    build:
+      dockerfile: Dockerfile
+      context: ./api
+    volumes:
+      - /app/node_modules
+      - ./api:/app
+    environment:
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: 12345678
+      DATABASE_NAME: dev
+    ports:
+      - "5000:5000"
