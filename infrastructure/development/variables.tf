@@ -38,3 +38,11 @@ variable "ASG_MAX_SIZE" {
 variable "PUBLIC_KEY_PATH" {
   default = "keypair.pub"
 }
+
+variable "DB_USERNAME" {
+  default = ""
+}
+
+variable "DB_PASSWORD" {
+  default = ""
+}

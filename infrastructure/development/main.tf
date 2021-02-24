@@ -19,6 +19,19 @@ module "security" {
   PUBLIC_KEY_PATH = var.PUBLIC_KEY_PATH
 }
 
+# Database
+
+module "database" {
+  source             = "../modules/database"
+  APP_NAME           = var.APP_NAME
+  ENV                = var.ENV
+  DB_SUBNETS         = module.network.subnet-ids
+  DB_USERNAME        = var.DB_USERNAME
+  DB_PASSWORD        = var.DB_PASSWORD
+  DB_SECURITY_GROUPS = [module.security.db-security-group]
+  DB_AZ              = "${var.AWS_REGION}a"
+}
+
 # Autoscaling groups & load balancer
 
 module "scaling" {
@@ -52,7 +65,7 @@ module "ecs-service" {
 # Buckets & static website serving
 
 module "storage" {
-  source                            = "../modules/storage"
-  APP_NAME                          = var.APP_NAME
-  ENV                               = var.ENV
+  source   = "../modules/storage"
+  APP_NAME = var.APP_NAME
+  ENV      = var.ENV
 }
