@@ -2,6 +2,7 @@ const Express = require('express');
 const BodyParser = require('body-parser');
 const Cors = require('cors');
 const { Pool } = require('pg');
+const Crypto = require('crypto');
 
 const config = require('./config');
 
@@ -58,6 +59,27 @@ router.route('/books').post(
         [req.body.title]
       );
       res.status(201).json(result.rows[0]);
+    } catch (e) {
+      console.log(e);
+      res.status(500).json(e);
+    }
+  }
+);
+
+router.route('/generate-cpu-load').post(
+  async (req, res) => {
+    try {
+      res.sendStatus(202);
+      for (let i = 0; i < 5000; i++) {
+        Crypto.pbkdf2(
+          Crypto.randomBytes(32).toString('hex'),
+          Crypto.randomBytes(32).toString('hex'),
+          100000,
+          64,
+          'sha512',
+          () => {},
+        );
+      }
     } catch (e) {
       console.log(e);
       res.status(500).json(e);
