@@ -18,6 +18,10 @@ variable "DB_PASSWORD" {
   type = string
 }
 
+variable "DB_NAME" {
+  type = string
+}
+
 variable "DB_SECURITY_GROUPS" {
   type = list(string)
 }
