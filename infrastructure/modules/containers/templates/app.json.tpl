@@ -7,10 +7,10 @@
     "image": "${REPOSITORY_URL}:latest",
     "workingDirectory": "/app",
     "portMappings": [
-        {
-            "containerPort": ${CONTAINER_PORT},
-            "hostPort": ${CONTAINER_PORT}
-        }
+      {
+        "containerPort": ${CONTAINER_PORT},
+        "hostPort": ${CONTAINER_PORT}
+      }
     ]
   }
 ]

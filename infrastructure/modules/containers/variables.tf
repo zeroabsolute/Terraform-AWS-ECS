@@ -22,3 +22,23 @@ variable "ECS_SERVICE_IAM_POLICY_ATTACHMENT" {
 variable "TARGET_GROUP_ARN" {
   type = string
 }
+
+variable "DATABASE_HOST" {
+  type = string
+}
+
+variable "DATABASE_PORT" {
+  type = number
+}
+
+variable "DATABASE_USER" {
+  type = string
+}
+
+variable "DATABASE_PASSWORD" {
+  type = string
+}
+
+variable "DATABASE_NAME" {
+  type = string
+}

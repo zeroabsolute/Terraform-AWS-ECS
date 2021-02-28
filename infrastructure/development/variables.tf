@@ -46,3 +46,7 @@ variable "DB_USERNAME" {
 variable "DB_PASSWORD" {
   default = ""
 }
+
+variable "DB_NAME" {
+  default = "dev"
+}

@@ -60,6 +60,11 @@ module "ecs-service" {
   ECS_SERVICE_IAM_ROLE              = module.security.ecs-service-role-arn
   ECS_SERVICE_IAM_POLICY_ATTACHMENT = module.security.ecs-service-attachment
   TARGET_GROUP_ARN                  = module.scaling.target-group-arn
+  DATABASE_HOST                     = module.database.db-endpoint
+  DATABASE_PORT                     = module.database.db-port
+  DATABASE_USER                     = var.DB_USERNAME
+  DATABASE_PASSWORD                 = var.DB_PASSWORD
+  DATABASE_NAME                     = var.DB_NAME
 }
 
 # Buckets & static website serving
