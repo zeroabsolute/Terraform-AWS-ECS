@@ -28,6 +28,7 @@ module "database" {
   DB_SUBNETS         = module.network.subnet-ids
   DB_USERNAME        = var.DB_USERNAME
   DB_PASSWORD        = var.DB_PASSWORD
+  DB_NAME            = var.DB_NAME
   DB_SECURITY_GROUPS = [module.security.db-security-group]
   DB_AZ              = "${var.AWS_REGION}a"
 }
@@ -60,7 +61,7 @@ module "ecs-service" {
   ECS_SERVICE_IAM_ROLE              = module.security.ecs-service-role-arn
   ECS_SERVICE_IAM_POLICY_ATTACHMENT = module.security.ecs-service-attachment
   TARGET_GROUP_ARN                  = module.scaling.target-group-arn
-  DATABASE_HOST                     = module.database.db-endpoint
+  DATABASE_HOST                     = module.database.db-address
   DATABASE_PORT                     = module.database.db-port
   DATABASE_USER                     = var.DB_USERNAME
   DATABASE_PASSWORD                 = var.DB_PASSWORD

@@ -1,5 +1,5 @@
-output "db-endpoint" {
-  value = aws_db_instance.db.endpoint
+output "db-address" {
+  value = aws_db_instance.db.address
 }
 
 output "db-port" {
