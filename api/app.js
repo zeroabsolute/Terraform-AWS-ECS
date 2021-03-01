@@ -3,11 +3,15 @@ const BodyParser = require('body-parser');
 const Cors = require('cors');
 const { Pool } = require('pg');
 const Crypto = require('crypto');
+const ExpressBunyanLogger = require('express-bunyan-logger');
 
 const config = require('./config');
+const { getLogger, initLoggerService, expressLoggerConfig } = require('./logger');
 
 const app = Express();
 const router = new Express.Router();
+
+initLoggerService();
 
 const pgClient = new Pool({
   host: config.dbHost,
@@ -17,16 +21,17 @@ const pgClient = new Pool({
   database: config.dbName,
 });
 
-pgClient.on('error', () => {
-  console.log('Error connecting to Postgres');
+pgClient.on('error', (e) => {
+  getLogger().debug(e);
 });
 
 pgClient.query('CREATE TABLE IF NOT EXISTS books (title varchar(128))')
-  .catch((err) => console.log(err));
+  .catch((err) => getLogger().debug(err));
 
 app.use(Cors());
 app.use(BodyParser.json({ limit: '10mb' }));
 app.use(BodyParser.urlencoded({ limit: '10mb', extended: false }));
+app.use(ExpressBunyanLogger(expressLoggerConfig));
 app.use(router);
 
 router.route('/health').get(
@@ -45,7 +50,7 @@ router.route('/books').get(
       const result = await pgClient.query('SELECT * FROM books');
       res.status(200).json(result.rows);
     } catch (e) {
-      console.log(e);
+      getLogger().debug(e);
       res.status(500).json(e);
     }
   }
@@ -54,13 +59,17 @@ router.route('/books').get(
 router.route('/books').post(
   async (req, res) => {
     try {
+      if (!req.body.title) {
+        throw new Error('Invalid params');
+      }
+
       const result = await pgClient.query(
         'INSERT INTO books(title) VALUES($1) RETURNING *',
         [req.body.title]
       );
       res.status(201).json(result.rows[0]);
     } catch (e) {
-      console.log(e);
+      getLogger().debug(e);
       res.status(500).json(e);
     }
   }
@@ -81,10 +90,19 @@ router.route('/generate-cpu-load').post(
         );
       }
     } catch (e) {
-      console.log(e);
+      getLogger().debug(e);
       res.status(500).json(e);
     }
   }
 );
+
+// Catch all unhandled errors and log them
+process.on('unhandledRejection', (reason) => {
+  throw reason;
+});
+
+process.on('uncaughtException', (error) => {
+  getLogger().debug(error);
+});
 
 module.exports = app;

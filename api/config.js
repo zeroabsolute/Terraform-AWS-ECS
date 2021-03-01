@@ -1,4 +1,5 @@
 module.exports = {
+  appName: 'gh',
   port: 5000,
   dbHost: process.env.DATABASE_HOST,
   dbPort: process.env.DATABASE_PORT,
