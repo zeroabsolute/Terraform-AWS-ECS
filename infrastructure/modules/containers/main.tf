@@ -15,14 +15,16 @@ resource "aws_ecs_cluster" "ecs-cluster" {
 data "template_file" "task-definition-template" {
   template = file("${path.module}/templates/app.json.tpl")
   vars = {
-    REPOSITORY_URL    = replace(aws_ecr_repository.ecr-repository.repository_url, "https://", "")
-    CONTAINER_PORT    = var.CONTAINER_PORT
-    APP_NAME          = var.APP_NAME
-    DATABASE_HOST     = var.DATABASE_HOST
-    DATABASE_PORT     = var.DATABASE_PORT
-    DATABASE_USER     = var.DATABASE_USER
-    DATABASE_PASSWORD = var.DATABASE_PASSWORD
-    DATABASE_NAME     = var.DATABASE_NAME
+    REPOSITORY_URL       = replace(aws_ecr_repository.ecr-repository.repository_url, "https://", "")
+    CONTAINER_PORT       = var.CONTAINER_PORT
+    APP_NAME             = var.APP_NAME
+    DATABASE_HOST        = var.DATABASE_HOST
+    DATABASE_PORT        = var.DATABASE_PORT
+    DATABASE_USER        = var.DATABASE_USER
+    DATABASE_PASSWORD    = var.DATABASE_PASSWORD
+    DATABASE_NAME        = var.DATABASE_NAME
+    CLOUDWATCH_LOG_GROUP = var.CLOUDWATCH_LOG_GROUP
+    AWS_REGION           = var.AWS_REGION
   }
 }
 

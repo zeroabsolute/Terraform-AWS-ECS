@@ -42,3 +42,11 @@ variable "DATABASE_PASSWORD" {
 variable "DATABASE_NAME" {
   type = string
 }
+
+variable "AWS_REGION" {
+  type = string
+}
+
+variable "CLOUDWATCH_LOG_GROUP" {
+  type = string
+}

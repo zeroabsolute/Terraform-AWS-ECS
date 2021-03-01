@@ -33,6 +33,14 @@
         "name": "DATABASE_NAME",
         "value": "${DATABASE_NAME}"
       }
-    ]
+    ],
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "${CLOUDWATCH_LOG_GROUP}",
+        "awslogs-region": "${AWS_REGION}",
+        "awslogs-stream-prefix": "ecs"
+      }
+    }
   }
 ]

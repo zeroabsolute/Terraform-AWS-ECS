@@ -51,6 +51,14 @@ module "scaling" {
   ECS_CLUSTER_NAME      = module.ecs-service.ecs-cluster-name
 }
 
+# Logging
+
+module "logging" {
+  source   = "../modules/logging"
+  APP_NAME = var.APP_NAME
+  ENV      = var.ENV
+}
+
 # ECR; ECS & tasks
 
 module "ecs-service" {
@@ -66,6 +74,8 @@ module "ecs-service" {
   DATABASE_USER                     = var.DB_USERNAME
   DATABASE_PASSWORD                 = var.DB_PASSWORD
   DATABASE_NAME                     = var.DB_NAME
+  AWS_REGION                        = var.AWS_REGION
+  CLOUDWATCH_LOG_GROUP              = module.logging.cloudwatch-log-group-id
 }
 
 # Buckets & static website serving
