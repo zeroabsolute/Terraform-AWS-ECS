@@ -30,6 +30,26 @@ resource "aws_autoscaling_group" "ecs-autoscaling-group" {
   }
 }
 
+# Autoscaling policy
+
+resource "aws_autoscaling_policy" "autoscaling-policy-scale-up" {
+  name                   = "${var.APP_NAME}-${var.ENV}-autoscaling-policy-scale-up"
+  autoscaling_group_name = aws_autoscaling_group.ecs-autoscaling-group.name
+  adjustment_type        = "ChangeInCapacity"
+  scaling_adjustment     = 1
+  cooldown               = 300
+  policy_type            = "SimpleScaling"
+}
+
+resource "aws_autoscaling_policy" "autoscaling-policy-scale-down" {
+  name                   = "${var.APP_NAME}-${var.ENV}-autoscaling-policy-down"
+  autoscaling_group_name = aws_autoscaling_group.ecs-autoscaling-group.name
+  adjustment_type        = "ChangeInCapacity"
+  scaling_adjustment     = -1
+  cooldown               = 300
+  policy_type            = "SimpleScaling"
+}
+
 # Application load balancer
 
 resource "aws_alb" "ecs-load-balancer" {

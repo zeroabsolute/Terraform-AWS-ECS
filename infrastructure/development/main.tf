@@ -51,12 +51,15 @@ module "scaling" {
   ECS_CLUSTER_NAME      = module.ecs-service.ecs-cluster-name
 }
 
-# Logging
+# Management
 
-module "logging" {
-  source   = "../modules/logging"
-  APP_NAME = var.APP_NAME
-  ENV      = var.ENV
+module "management" {
+  source                 = "../modules/management"
+  APP_NAME               = var.APP_NAME
+  ENV                    = var.ENV
+  ALARM_ACTIONS_HIGH_CPU = [module.scaling.autoscaling-policy-scale-up-arn]
+  ALARM_ACTIONS_LOW_CPU  = [module.scaling.autoscaling-policy-scale-down-arn]
+  AUTOSCALING_GROUP_NAME = module.scaling.ecs-autoscaling-group-name
 }
 
 # ECR; ECS & tasks
@@ -75,13 +78,13 @@ module "ecs-service" {
   DATABASE_PASSWORD                 = var.DB_PASSWORD
   DATABASE_NAME                     = var.DB_NAME
   AWS_REGION                        = var.AWS_REGION
-  CLOUDWATCH_LOG_GROUP              = module.logging.cloudwatch-log-group-id
+  CLOUDWATCH_LOG_GROUP              = module.management.cloudwatch-log-group-id
 }
 
 # Buckets & static website serving
 
-module "storage" {
-  source   = "../modules/storage"
-  APP_NAME = var.APP_NAME
-  ENV      = var.ENV
-}
+# module "storage" {
+#   source   = "../modules/storage"
+#   APP_NAME = var.APP_NAME
+#   ENV      = var.ENV
+# }
