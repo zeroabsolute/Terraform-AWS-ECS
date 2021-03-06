@@ -4,6 +4,7 @@ const Cors = require('cors');
 const { Pool } = require('pg');
 const Crypto = require('crypto');
 const ExpressBunyanLogger = require('express-bunyan-logger');
+const Os = require('os-utils');
 
 const config = require('./config');
 const { getLogger, initLoggerService, expressLoggerConfig } = require('./logger');
@@ -35,14 +36,27 @@ app.use(ExpressBunyanLogger(expressLoggerConfig));
 app.use(router);
 
 router.route('/health').get(
-  (_req, res) => {
-    res.status(200).json({
+  async (_req, res) => {
+    const cpuUtilization = await getCpuUtilizationPromise();
+    const status = cpuUtilization > 0.5 ? 503 : 200;
+    const statusCode = cpuUtilization > 0.5 ? 'Not OK' : 'OK';
+
+    res.status(status).json({
       appName: 'API',
       version: process.env.npm_package_version,
-      status: 'OK',
+      status: statusCode,
+      metadata: {
+        cpuUtilization,
+      }
     });
   }
 );
+
+const getCpuUtilizationPromise = () => new Promise((resolve) => {
+  Os.cpuUsage((percentage) => {
+    resolve(percentage);
+  })
+});
 
 router.route('/books').get(
   async (_req, res) => {
