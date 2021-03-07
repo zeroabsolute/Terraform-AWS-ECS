@@ -52,6 +52,7 @@ resource "aws_cloudwatch_metric_alarm" "errors-5xx" {
   threshold                 = 0.1
   alarm_description         = "Request error rate has exceeded 10%"
   insufficient_data_actions = []
+  alarm_actions             = var.ALARM_ACTIONS_HIGH_5xx_ERRORS
 
   metric_query {
     id          = "e1"

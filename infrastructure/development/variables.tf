@@ -50,3 +50,11 @@ variable "DB_PASSWORD" {
 variable "DB_NAME" {
   default = "dev"
 }
+
+variable "SNS_EMAIL_RECEIVER" {
+  default = ""
+}
+
+variable "SNS_STACK_NAME" {
+  default = "sns-stack-102947586"
+}

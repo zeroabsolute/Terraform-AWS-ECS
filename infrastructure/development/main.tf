@@ -51,16 +51,27 @@ module "scaling" {
   ECS_CLUSTER_NAME      = module.ecs-service.ecs-cluster-name
 }
 
+# Notifications
+
+module "notifications" {
+  source              = "../modules/notifications"
+  APP_NAME            = var.APP_NAME
+  ENV                 = var.ENV
+  SNS_EMAIL_ADDRESSES = [var.SNS_EMAIL_RECEIVER]
+  SNS_STACK_NAME      = var.SNS_STACK_NAME
+}
+
 # Management
 
 module "management" {
-  source                 = "../modules/management"
-  APP_NAME               = var.APP_NAME
-  ENV                    = var.ENV
-  ALARM_ACTIONS_HIGH_CPU = [module.scaling.autoscaling-policy-scale-up-arn]
-  ALARM_ACTIONS_LOW_CPU  = [module.scaling.autoscaling-policy-scale-down-arn]
-  AUTOSCALING_GROUP_NAME = module.scaling.ecs-autoscaling-group-name
-  ALB_ARN_SUFFIX         = module.scaling.alb-arn-suffix
+  source                        = "../modules/management"
+  APP_NAME                      = var.APP_NAME
+  ENV                           = var.ENV
+  ALARM_ACTIONS_HIGH_CPU        = [module.scaling.autoscaling-policy-scale-up-arn]
+  ALARM_ACTIONS_LOW_CPU         = [module.scaling.autoscaling-policy-scale-down-arn]
+  ALARM_ACTIONS_HIGH_5xx_ERRORS = [module.notifications.sns-topic-arn]
+  AUTOSCALING_GROUP_NAME        = module.scaling.ecs-autoscaling-group-name
+  ALB_ARN_SUFFIX                = module.scaling.alb-arn-suffix
 }
 
 # ECR; ECS & tasks
@@ -85,8 +96,8 @@ module "ecs-service" {
 
 # Buckets & static website serving
 
-# module "storage" {
-#   source   = "../modules/storage"
-#   APP_NAME = var.APP_NAME
-#   ENV      = var.ENV
-# }
+module "storage" {
+  source   = "../modules/storage"
+  APP_NAME = var.APP_NAME
+  ENV      = var.ENV
+}
