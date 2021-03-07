@@ -60,6 +60,7 @@ module "management" {
   ALARM_ACTIONS_HIGH_CPU = [module.scaling.autoscaling-policy-scale-up-arn]
   ALARM_ACTIONS_LOW_CPU  = [module.scaling.autoscaling-policy-scale-down-arn]
   AUTOSCALING_GROUP_NAME = module.scaling.ecs-autoscaling-group-name
+  ALB_ARN_SUFFIX         = module.scaling.alb-arn-suffix
 }
 
 # ECR; ECS & tasks

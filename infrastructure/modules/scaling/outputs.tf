@@ -13,3 +13,7 @@ output "autoscaling-policy-scale-down-arn" {
 output "ecs-autoscaling-group-name" {
   value = aws_autoscaling_group.ecs-autoscaling-group.name
 }
+
+output "alb-arn-suffix" {
+  value = aws_alb.ecs-load-balancer.arn_suffix
+}

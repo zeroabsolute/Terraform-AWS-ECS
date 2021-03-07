@@ -17,3 +17,7 @@ variable "ALARM_ACTIONS_LOW_CPU" {
 variable "AUTOSCALING_GROUP_NAME" {
   type = string
 }
+
+variable "ALB_ARN_SUFFIX" {
+  type = string
+}
