@@ -72,9 +72,9 @@ resource "aws_alb_target_group" "ecs-target-group" {
   depends_on = [aws_alb.ecs-load-balancer]
 
   health_check {
-    healthy_threshold   = "5"
-    unhealthy_threshold = "2"
-    interval            = "300"
+    healthy_threshold   = "2"
+    unhealthy_threshold = "5"
+    interval            = "60"
     matcher             = "200"
     path                = "/health"
     port                = "traffic-port"

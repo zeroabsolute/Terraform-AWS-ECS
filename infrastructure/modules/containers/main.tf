@@ -39,7 +39,7 @@ resource "aws_ecs_service" "ecs-service" {
   name            = "${var.APP_NAME}-${var.ENV}-ecs-service"
   cluster         = aws_ecs_cluster.ecs-cluster.id
   task_definition = aws_ecs_task_definition.task-definition.arn
-  desired_count   = 1
+  desired_count   = var.ASG_MAX_SIZE
   iam_role        = var.ECS_SERVICE_IAM_ROLE
   depends_on      = [var.ECS_SERVICE_IAM_POLICY_ATTACHMENT]
 

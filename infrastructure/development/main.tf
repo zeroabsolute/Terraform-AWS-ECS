@@ -79,6 +79,7 @@ module "ecs-service" {
   DATABASE_NAME                     = var.DB_NAME
   AWS_REGION                        = var.AWS_REGION
   CLOUDWATCH_LOG_GROUP              = module.management.cloudwatch-log-group-id
+  ASG_MAX_SIZE                      = var.ASG_MAX_SIZE
 }
 
 # Buckets & static website serving

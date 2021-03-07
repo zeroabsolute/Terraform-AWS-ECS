@@ -50,3 +50,7 @@ variable "AWS_REGION" {
 variable "CLOUDWATCH_LOG_GROUP" {
   type = string
 }
+
+variable "ASG_MAX_SIZE" {
+  type = number
+}
