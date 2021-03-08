@@ -22,6 +22,7 @@ jobs:
         run: cd infrastructure/staging
       - name: Select Configuration
         if: github.ref == 'refs/heads/dev'
+        run: cd infrastructure/development
       - name: Show Directory Content
         run: ls -a
       - name: Setup Terraform
