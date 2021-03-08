@@ -17,8 +17,10 @@ jobs:
       - name: Select Configuration
         if: github.ref == 'refs/heads/master'
         run: cd infrastructure/production
+      - name: Select Configuration
         if: github.ref == 'refs/heads/staging'
         run: cd infrastructure/staging
+      - name: Select Configuration
         if: github.ref == 'refs/heads/dev'
         run: cd infrastructure/development
       - name: Setup Terraform
