@@ -24,7 +24,6 @@ jobs:
         if: github.ref == 'refs/heads/dev'
       - name: Show Directory Content
         run: ls -a
-        run: cd infrastructure/development
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
