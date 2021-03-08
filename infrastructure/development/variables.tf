@@ -58,3 +58,11 @@ variable "SNS_EMAIL_RECEIVER" {
 variable "SNS_STACK_NAME" {
   default = "sns-stack-102947586"
 }
+
+variable "ORGANIZATION_NAME" {
+  default = "GH"
+}
+
+variable "WORKSPACE_NAME" {
+  default = "Terraform-AWS-ECS"
+}
