@@ -9,16 +9,13 @@ terraform {
     aws = {
       source = "hashicorp/aws"
     }
-    random = {
-      source = "hashicorp/random"
-    }
   }
 
   backend "remote" {
-    organization = var.ORGANIZATION
+    organization = "GH"
 
     workspaces {
-      name = var.WORKSPACE_NAME
+      name = "Terraform-AWS-ECS"
     }
   }
 }
