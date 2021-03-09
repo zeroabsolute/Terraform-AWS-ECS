@@ -77,10 +77,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: terraform
     steps:
-    - run: "echo Web client S3 URL: ${{needs.terraform.outputs.WEB_CLIENT_DOMAIN_DEV}}"
+    - run: echo ${{needs.terraform.outputs.WEB_CLIENT_DOMAIN_DEV}}
   build_web_admin:
     name: 'Build Web Admin'
     runs-on: ubuntu-latest
     needs: terraform
     steps:
-    - run: "echo Web admin S3 URL: ${{needs.terraform.outputs.WEB_ADMIN_DOMAIN_DEV}}"
+    - run: echo ${{needs.terraform.outputs.WEB_ADMIN_DOMAIN_DEV}}
