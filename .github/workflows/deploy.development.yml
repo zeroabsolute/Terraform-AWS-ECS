@@ -73,11 +73,13 @@ jobs:
       WEB_CLIENT_DOMAIN_DEV: ${{ steps.output.outputs.WEB_CLIENT_DOMAIN_DEV }}
       WEB_ADMIN_DOMAIN_DEV: ${{ steps.output.outputs.WEB_ADMIN_DOMAIN_DEV }}
   build_web_client:
+    name: 'Build Web Client'
     runs-on: ubuntu-latest
     needs: terraform
     steps:
     - run: echo ${{needs.terraform.outputs.WEB_CLIENT_DOMAIN_DEV}}
   build_web_admin:
+    name: 'Build Web Admin'
     runs-on: ubuntu-latest
     needs: terraform
     steps:
