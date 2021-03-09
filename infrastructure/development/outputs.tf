@@ -7,7 +7,7 @@ output "WEB_ADMIN_DOMAIN_DEV" {
 }
 
 output "WEB_CLIENT_BUCKET_DEV" {
-  value = module.storage.web-admin-bucket-name
+  value = module.storage.web-client-bucket-name
 }
 
 output "WEB_ADMIN_BUCKET_DEV" {

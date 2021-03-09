@@ -77,6 +77,8 @@ jobs:
     outputs:
       WEB_CLIENT_DOMAIN_DEV: ${{ steps.output.outputs.WEB_CLIENT_DOMAIN_DEV }}
       WEB_ADMIN_DOMAIN_DEV: ${{ steps.output.outputs.WEB_ADMIN_DOMAIN_DEV }}
+      WEB_CLIENT_BUCKET_DEV: ${{ steps.output.outputs.WEB_CLIENT_BUCKET_DEV }}
+      WEB_ADMIN_BUCKET_DEV: ${{ steps.output.outputs.WEB_ADMIN_BUCKET_DEV }}
   build_web_client:
     name: 'Build Web Client'
     runs-on: ubuntu-latest
