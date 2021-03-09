@@ -71,13 +71,13 @@ jobs:
         outputs:
           WEB_CLIENT_DOMAIN_DEV: $(terraform output WEB_CLIENT_DOMAIN_DEV)
           WEB_ADMIN_DOMAIN_DEV: $(terraform output WEB_ADMIN_DOMAIN_DEV)
-      build_web_client:
-        runs-on: ubuntu-latest
-        needs: terraform
-        steps:
-        - run: echo ${{needs.terraform.outputs.WEB_CLIENT_DOMAIN_DEV}}
-      build_web_admin:
-        runs-on: ubuntu-latest
-        needs: terraform
-        steps:
-        - run: echo ${{needs.terraform.outputs.WEB_ADMIN_DOMAIN_DEV}}
+  build_web_client:
+    runs-on: ubuntu-latest
+    needs: terraform
+    steps:
+    - run: echo ${{needs.terraform.outputs.WEB_CLIENT_DOMAIN_DEV}}
+  build_web_admin:
+    runs-on: ubuntu-latest
+    needs: terraform
+    steps:
+    - run: echo ${{needs.terraform.outputs.WEB_ADMIN_DOMAIN_DEV}}
