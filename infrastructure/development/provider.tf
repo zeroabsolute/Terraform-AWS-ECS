@@ -15,7 +15,7 @@ terraform {
     organization = "GH"
 
     workspaces {
-      name = "Terraform-AWS-ECS"
+      name = "Terraform-AWS-ECS-Development"
     }
   }
 }
