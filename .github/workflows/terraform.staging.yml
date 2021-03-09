@@ -5,6 +5,8 @@ on:
     branches:
       - staging
   pull_request:
+    branches:
+      - staging
 
 defaults:
   run:
