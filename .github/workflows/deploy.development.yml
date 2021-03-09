@@ -1,4 +1,4 @@
-name: Deploy to Development
+name: 'Deploy to Development'
 
 on:
   push:
@@ -63,14 +63,14 @@ jobs:
         run: terraform apply -auto-approve
       - name: Terraform Output
         if: github.event_name == 'push'
-        outputs:
-          WEB_CLIENT_DOMAIN_DEV: $(terraform output WEB_CLIENT_DOMAIN_DEV)
-          WEB_ADMIN_DOMAIN_DEV: $(terraform output WEB_ADMIN_DOMAIN_DEV)
         run: |
           WEB_CLIENT_DOMAIN_DEV=$(terraform output WEB_CLIENT_DOMAIN_DEV)
           WEB_ADMIN_DOMAIN_DEV=$(terraform output WEB_ADMIN_DOMAIN_DEV)
           echo $WEB_CLIENT_DOMAIN_DEV
           echo $WEB_ADMIN_DOMAIN_DEV
+        outputs:
+          WEB_CLIENT_DOMAIN_DEV: $(terraform output WEB_CLIENT_DOMAIN_DEV)
+          WEB_ADMIN_DOMAIN_DEV: $(terraform output WEB_ADMIN_DOMAIN_DEV)
       build_web_client:
         runs-on: ubuntu-latest
         needs: terraform
