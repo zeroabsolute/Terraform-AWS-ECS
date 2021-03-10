@@ -81,17 +81,17 @@ module "ecs-service" {
   APP_NAME                          = var.APP_NAME
   ENV                               = var.ENV
   CONTAINER_PORT                    = var.ECS_CONTAINER_PORT
-  ECS_SERVICE_IAM_ROLE              = module.security.ecs-service-role-arn
-  ECS_SERVICE_IAM_POLICY_ATTACHMENT = module.security.ecs-service-attachment
-  TARGET_GROUP_ARN                  = module.scaling.target-group-arn
-  DATABASE_HOST                     = module.database.db-address
-  DATABASE_PORT                     = module.database.db-port
-  DATABASE_USER                     = var.DB_USERNAME
-  DATABASE_PASSWORD                 = var.DB_PASSWORD
-  DATABASE_NAME                     = var.DB_NAME
-  AWS_REGION                        = var.AWS_REGION
-  CLOUDWATCH_LOG_GROUP              = module.management.cloudwatch-log-group-id
-  ASG_MAX_SIZE                      = var.ASG_MAX_SIZE
+  # ECS_SERVICE_IAM_ROLE              = module.security.ecs-service-role-arn
+  # ECS_SERVICE_IAM_POLICY_ATTACHMENT = module.security.ecs-service-attachment
+  # TARGET_GROUP_ARN                  = module.scaling.target-group-arn
+  # DATABASE_HOST                     = module.database.db-address
+  # DATABASE_PORT                     = module.database.db-port
+  # DATABASE_USER                     = var.DB_USERNAME
+  # DATABASE_PASSWORD                 = var.DB_PASSWORD
+  # DATABASE_NAME                     = var.DB_NAME
+  # AWS_REGION                        = var.AWS_REGION
+  # CLOUDWATCH_LOG_GROUP              = module.management.cloudwatch-log-group-id
+  # ASG_MAX_SIZE                      = var.ASG_MAX_SIZE
 }
 
 # Buckets & static website serving
