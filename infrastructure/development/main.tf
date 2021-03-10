@@ -77,10 +77,10 @@
 # ECR; ECS & tasks
 
 module "ecs-service" {
-  source                            = "../modules/containers"
-  APP_NAME                          = var.APP_NAME
-  ENV                               = var.ENV
-  CONTAINER_PORT                    = var.ECS_CONTAINER_PORT
+  source         = "../modules/containers"
+  APP_NAME       = var.APP_NAME
+  ENV            = var.ENV
+  CONTAINER_PORT = var.ECS_CONTAINER_PORT
   # ECS_SERVICE_IAM_ROLE              = module.security.ecs-service-role-arn
   # ECS_SERVICE_IAM_POLICY_ATTACHMENT = module.security.ecs-service-attachment
   # TARGET_GROUP_ARN                  = module.scaling.target-group-arn
