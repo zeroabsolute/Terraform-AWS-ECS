@@ -13,3 +13,7 @@ output "WEB_CLIENT_BUCKET_DEV" {
 output "WEB_ADMIN_BUCKET_DEV" {
   value = module.storage.web-admin-bucket-name
 }
+
+output "ECR_REPOSITORY_NAME" {
+  value = module.ecs-service.ecr-repository-name
+}
