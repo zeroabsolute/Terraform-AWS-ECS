@@ -70,15 +70,45 @@ jobs:
           web_admin_bucket_dev=$(terraform output WEB_ADMIN_BUCKET_DEV)
           web_client_domain_dev=$(terraform output WEB_CLIENT_DOMAIN_DEV)
           web_admin_domain_dev=$(terraform output WEB_ADMIN_DOMAIN_DEV)
+          ecr_repository_name=$(terraform output ECR_REPOSITORY_NAME)
           echo "::set-output name=WEB_CLIENT_BUCKET_DEV::${web_client_bucket_dev}"
           echo "::set-output name=WEB_ADMIN_BUCKET_DEV::${web_admin_bucket_dev}"
           echo "::set-output name=WEB_CLIENT_DOMAIN_DEV::${web_client_domain_dev}"
           echo "::set-output name=WEB_ADMIN_DOMAIN_DEV::${web_admin_domain_dev}"
+          echo "::set-output name=ECR_REPOSITORY_NAME_DEV::${ecr_repository_name}"
     outputs:
       WEB_CLIENT_DOMAIN_DEV: ${{ steps.output.outputs.WEB_CLIENT_DOMAIN_DEV }}
       WEB_ADMIN_DOMAIN_DEV: ${{ steps.output.outputs.WEB_ADMIN_DOMAIN_DEV }}
       WEB_CLIENT_BUCKET_DEV: ${{ steps.output.outputs.WEB_CLIENT_BUCKET_DEV }}
       WEB_ADMIN_BUCKET_DEV: ${{ steps.output.outputs.WEB_ADMIN_BUCKET_DEV }}
+      ECR_REPOSITORY_NAME_DEV: ${{ steps.output.outputs.ECR_REPOSITORY_NAME_DEV }}
+  build_api:
+    name: 'Build API'
+    runs-on: ubuntu-latest
+    needs: terraform
+    defaults:
+      run:
+        shell: bash
+        working-directory: api
+    steps:
+      - uses: actions/checkout@v2
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ needs.terraform.outputs.ECR_REPOSITORY_NAME_DEV }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
   build_web_client:
     name: 'Build Web Client'
     runs-on: ubuntu-latest
@@ -98,7 +128,7 @@ jobs:
       - name: Build React App
         run: npm install && npm run build
       - name: Deploy app build to S3 bucket
-        run: aws s3 sync ./build/ s3://${{needs.terraform.outputs.WEB_CLIENT_BUCKET_DEV}} --delete
+        run: aws s3 sync ./build/ s3://${{ needs.terraform.outputs.WEB_CLIENT_BUCKET_DEV }} --delete
   build_web_admin:
     name: 'Build Web Admin'
     runs-on: ubuntu-latest
@@ -118,4 +148,4 @@ jobs:
       - name: Build React App
         run: npm install && npm run build
       - name: Deploy app build to S3 bucket
-        run: aws s3 sync ./build/ s3://${{needs.terraform.outputs.WEB_ADMIN_BUCKET_DEV}} --delete
+        run: aws s3 sync ./build/ s3://${{ needs.terraform.outputs.WEB_ADMIN_BUCKET_DEV }} --delete
