@@ -143,3 +143,5 @@ terraform.rc
 *.csv
 data
 *.cmd
+
+keypair
