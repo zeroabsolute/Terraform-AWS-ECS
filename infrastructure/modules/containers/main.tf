@@ -1,13 +1,13 @@
 # ECR
 
 resource "aws_ecr_repository" "ecr-repository" {
-  name = "${var.APP_NAME}-ecr-repository"
+  name = "${var.APP_NAME}-ecr-repository-${var.ENV}"
 }
 
 # ECS cluster
 
 resource "aws_ecs_cluster" "ecs-cluster" {
-  name = "${var.APP_NAME}-${var.ENV}-ecs-cluster"
+  name = "${var.APP_NAME}-ecs-cluster-${var.ENV}"
 }
 
 # Task definition 
@@ -36,7 +36,7 @@ resource "aws_ecs_task_definition" "task-definition" {
 # ECS service
 
 resource "aws_ecs_service" "ecs-service" {
-  name            = "${var.APP_NAME}-${var.ENV}-ecs-service"
+  name            = "${var.APP_NAME}-ecs-service-${var.ENV}"
   cluster         = aws_ecs_cluster.ecs-cluster.id
   task_definition = aws_ecs_task_definition.task-definition.arn
   desired_count   = var.ASG_MAX_SIZE

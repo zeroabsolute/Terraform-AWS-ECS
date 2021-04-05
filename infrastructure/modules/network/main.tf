@@ -5,7 +5,7 @@ resource "aws_vpc" "main" {
   enable_dns_hostnames = true
   enable_classiclink   = false
   tags = {
-    "Name" = "${var.APP_NAME}-${var.ENV}-vpc"
+    Name = "${var.APP_NAME}-vpc-${var.ENV}"
   }
 }
 
@@ -17,7 +17,7 @@ resource "aws_subnet" "main-public-subnets" {
   cidr_block              = "10.0.${each.value}.0/24"
   map_public_ip_on_launch = "true"
   tags = {
-    "Name" = "${var.APP_NAME}-${var.ENV}-subnet-${each.value}"
+    Name = "${var.APP_NAME}-subnet-${each.value}-${var.ENV}"
   }
 }
 
@@ -25,7 +25,7 @@ resource "aws_internet_gateway" "main-gateway" {
   vpc_id = aws_vpc.main.id
 
   tags = {
-    Name = "${var.APP_NAME}-${var.ENV}-vpc-gateway"
+    Name = "${var.APP_NAME}-vpc-gateway-${var.ENV}"
   }
 }
 
@@ -37,7 +37,7 @@ resource "aws_route_table" "main-route-table" {
   }
 
   tags = {
-    Name = "${var.APP_NAME}-${var.ENV}-main-route-table"
+    Name = "${var.APP_NAME}-main-route-table-${var.ENV}"
   }
 }
 

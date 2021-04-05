@@ -15,9 +15,9 @@ data "template_file" "cloudformation-sns-stack" {
 }
 
 resource "aws_cloudformation_stack" "sns-topic" {
-  name          = "${var.APP_NAME}-${var.ENV}-${var.SNS_STACK_NAME}"
+  name          = "${var.APP_NAME}-${var.SNS_STACK_NAME}-${var.ENV}"
   template_body = data.template_file.cloudformation-sns-stack.rendered
   tags = {
-    Name = "${var.APP_NAME}-${var.ENV}-${var.SNS_STACK_NAME}"
+    Name = "${var.APP_NAME}-${var.SNS_STACK_NAME}-${var.ENV}"
   }
 }

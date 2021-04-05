@@ -1,7 +1,7 @@
 # Client web
 
 resource "aws_s3_bucket" "web-client" {
-  bucket        = "${var.APP_NAME}-${var.ENV}-web-client"
+  bucket        = "${var.APP_NAME}-web-client-${var.ENV}"
   acl           = "public-read"
   force_destroy = true
 
@@ -11,7 +11,7 @@ resource "aws_s3_bucket" "web-client" {
   }
 
   tags = {
-    Name = "${var.APP_NAME}-${var.ENV}-web-client"
+    Name = "${var.APP_NAME}-web-client-${var.ENV}"
   }
 
   lifecycle {
@@ -21,10 +21,9 @@ resource "aws_s3_bucket" "web-client" {
 
 resource "aws_s3_bucket_policy" "web-client-bucket-policy" {
   bucket = aws_s3_bucket.web-client.id
-
   policy = jsonencode({
     Version = "2012-10-17"
-    Id      = "${var.APP_NAME}-${var.ENV}-web-client-policy"
+    Id      = "${var.APP_NAME}-web-client-policy-${var.ENV}"
     Statement = [
       {
         Sid       = "PublicReadGetObject"
@@ -40,7 +39,7 @@ resource "aws_s3_bucket_policy" "web-client-bucket-policy" {
 # Admin web
 
 resource "aws_s3_bucket" "web-admin" {
-  bucket        = "${var.APP_NAME}-${var.ENV}-web-admin"
+  bucket        = "${var.APP_NAME}-web-admin-${var.ENV}"
   acl           = "public-read"
   force_destroy = true
 
@@ -50,7 +49,7 @@ resource "aws_s3_bucket" "web-admin" {
   }
 
   tags = {
-    Name = "${var.APP_NAME}-${var.ENV}-web-admin"
+    Name = "${var.APP_NAME}-web-admin-${var.ENV}"
   }
 
   lifecycle {
@@ -63,7 +62,7 @@ resource "aws_s3_bucket_policy" "web-admin-bucket-policy" {
 
   policy = jsonencode({
     Version = "2012-10-17"
-    Id      = "${var.APP_NAME}-${var.ENV}-web-admin-policy"
+    Id      = "${var.APP_NAME}-web-admin-policy-${var.ENV}"
     Statement = [
       {
         Sid       = "PublicReadGetObject"
@@ -79,10 +78,10 @@ resource "aws_s3_bucket_policy" "web-admin-bucket-policy" {
 # File bucket
 
 resource "aws_s3_bucket" "file-bucket" {
-  bucket = "${var.APP_NAME}-${var.ENV}-files"
+  bucket = "${var.APP_NAME}-files-${var.ENV}"
   acl    = "private"
 
   tags = {
-    Name = "${var.APP_NAME}-${var.ENV}-files"
+    Name = "${var.APP_NAME}-files-${var.ENV}"
   }
 }

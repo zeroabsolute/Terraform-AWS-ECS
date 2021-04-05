@@ -4,18 +4,18 @@ provider "aws" {
   secret_key = var.AWS_SECRET_KEY
 }
 
-terraform {
-  required_providers {
-    aws = {
-      source = "hashicorp/aws"
-    }
-  }
+# terraform {
+#   required_providers {
+#     aws = {
+#       source = "hashicorp/aws"
+#     }
+#   }
 
-  backend "remote" {
-    organization = "GH"
+#   backend "remote" {
+#     organization = "GH"
 
-    workspaces {
-      name = "Terraform-AWS-ECS-Development"
-    }
-  }
-}
+#     workspaces {
+#       name = "Terraform-AWS-ECS-Development"
+#     }
+#   }
+# }

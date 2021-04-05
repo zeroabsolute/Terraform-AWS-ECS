@@ -1,99 +1,30 @@
 # ECS EC2 role
 
 resource "aws_iam_role" "ecs-ec2-role" {
-  name               = "${var.APP_NAME}-${var.ENV}-ecs-ec2-role"
-  assume_role_policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": "sts:AssumeRole",
-      "Principal": {
-        "Service": "ec2.amazonaws.com"
-      },
-      "Effect": "Allow",
-      "Sid": ""
-    }
-  ]
-}
-EOF
-
+  name               = "${var.APP_NAME}-ecs-ec2-role-${var.ENV}"
+  assume_role_policy = file("${path.module}/templates/ecs-ec2-role.json.tpl")
 }
 
 resource "aws_iam_instance_profile" "ecs-ec2-role" {
-  name = "${var.APP_NAME}-${var.ENV}-ecs-ec2-role"
+  name = "${var.APP_NAME}-ecs-ec2-role-${var.ENV}"
   role = aws_iam_role.ecs-ec2-role.name
 }
 
 resource "aws_iam_role_policy" "ecs-ec2-role-policy" {
-  name   = "${var.APP_NAME}-${var.ENV}-ecs-ec2-role-policy"
+  name   = "${var.APP_NAME}-ecs-ec2-role-policy-${var.ENV}"
   role   = aws_iam_role.ecs-ec2-role.id
-  policy = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-              "ecs:CreateCluster",
-              "ecs:DeregisterContainerInstance",
-              "ecs:DiscoverPollEndpoint",
-              "ecs:Poll",
-              "ecs:RegisterContainerInstance",
-              "ecs:StartTelemetrySession",
-              "ecs:Submit*",
-              "ecs:StartTask",
-              "ecr:GetAuthorizationToken",
-              "ecr:BatchCheckLayerAvailability",
-              "ecr:GetDownloadUrlForLayer",
-              "ecr:BatchGetImage",
-              "logs:CreateLogStream",
-              "logs:PutLogEvents"
-            ],
-            "Resource": "*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "logs:CreateLogGroup",
-                "logs:CreateLogStream",
-                "logs:PutLogEvents",
-                "logs:DescribeLogStreams"
-            ],
-            "Resource": [
-                "arn:aws:logs:*:*:*"
-            ]
-        }
-    ]
-}
-EOF
-
+  policy = file("${path.module}/templates/ecs-ec2-role-policy.json.tpl")
 }
 
 # ECS service role
 
 resource "aws_iam_role" "ecs-service-role" {
-  name               = "${var.APP_NAME}-${var.ENV}-ecs-service-role"
-  assume_role_policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": "sts:AssumeRole",
-      "Principal": {
-        "Service": "ecs.amazonaws.com"
-      },
-      "Effect": "Allow",
-      "Sid": ""
-    }
-  ]
-}
-EOF
-
+  name               = "${var.APP_NAME}-ecs-service-role-${var.ENV}"
+  assume_role_policy = file("${path.module}/templates/ecs-service-role.json.tpl")
 }
 
 resource "aws_iam_policy_attachment" "ecs-service-attachment" {
-  name       = "${var.APP_NAME}-${var.ENV}-ecs-service-attachment"
+  name       = "${var.APP_NAME}-ecs-service-attachment-${var.ENV}"
   roles      = [aws_iam_role.ecs-service-role.name]
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceRole"
 }
@@ -102,7 +33,7 @@ resource "aws_iam_policy_attachment" "ecs-service-attachment" {
 
 resource "aws_security_group" "elb-security-group" {
   vpc_id      = var.VPC_ID
-  name        = "${var.APP_NAME}-${var.ENV}-elb-sg"
+  name        = "${var.APP_NAME}-elb-sg-${var.ENV}"
   description = "Security group for ELB"
 
   egress {
@@ -119,13 +50,13 @@ resource "aws_security_group" "elb-security-group" {
   }
 
   tags = {
-    Name = "${var.APP_NAME}-${var.ENV}-elb-sg"
+    Name = "${var.APP_NAME}-elb-sg-${var.ENV}"
   }
 }
 
 resource "aws_security_group" "ecs-security-group" {
   vpc_id      = var.VPC_ID
-  name        = "${var.APP_NAME}-${var.ENV}-ecs-sg"
+  name        = "${var.APP_NAME}-ecs-sg-${var.ENV}"
   description = "Security group for ECS"
 
   egress {
@@ -149,13 +80,13 @@ resource "aws_security_group" "ecs-security-group" {
   }
 
   tags = {
-    Name = "${var.APP_NAME}-${var.ENV}-ecs-sg"
+    Name = "${var.APP_NAME}-ecs-sg-${var.ENV}"
   }
 }
 
 resource "aws_security_group" "db-security-group" {
   vpc_id      = var.VPC_ID
-  name        = "${var.APP_NAME}-${var.ENV}-db-sg"
+  name        = "${var.APP_NAME}-db-sg-${var.ENV}"
   description = "Security group for RDS"
 
   ingress {
@@ -173,14 +104,14 @@ resource "aws_security_group" "db-security-group" {
     self        = true
   }
   tags = {
-    Name = "${var.APP_NAME}-${var.ENV}-db-sg"
+    Name = "${var.APP_NAME}-db-sg-${var.ENV}"
   }
 }
 
 # Keypairs
 
 resource "aws_key_pair" "keypair" {
-  key_name   = "${var.APP_NAME}-${var.ENV}-keypair"
+  key_name   = "${var.APP_NAME}-keypair-${var.ENV}"
   public_key = file(var.PUBLIC_KEY_PATH)
   lifecycle {
     ignore_changes = [public_key]

@@ -1,7 +1,7 @@
 # Launch config
 
 resource "aws_launch_configuration" "launch-config" {
-  name                 = "${var.APP_NAME}-${var.ENV}-launch-config"
+  name                 = "${var.APP_NAME}-launch-config-${var.ENV}"
   image_id             = var.ECS_AMI_ID
   instance_type        = var.ECS_INSTANCE_TYPE
   iam_instance_profile = var.EC2_INSTANCE_PROFILE
@@ -17,7 +17,7 @@ resource "aws_launch_configuration" "launch-config" {
 # Autoscaling group
 
 resource "aws_autoscaling_group" "ecs-autoscaling-group" {
-  name                 = "${var.APP_NAME}-${var.ENV}-autoscaling-group"
+  name                 = "${var.APP_NAME}-autoscaling-group-${var.ENV}"
   vpc_zone_identifier  = var.SUBNETS
   launch_configuration = aws_launch_configuration.launch-config.name
   min_size             = 1
@@ -25,7 +25,7 @@ resource "aws_autoscaling_group" "ecs-autoscaling-group" {
 
   tag {
     key                 = "Name"
-    value               = "${var.APP_NAME}-${var.ENV}-autoscaling-group"
+    value               = "${var.APP_NAME}-autoscaling-group-${var.ENV}"
     propagate_at_launch = true
   }
 }
@@ -33,7 +33,7 @@ resource "aws_autoscaling_group" "ecs-autoscaling-group" {
 # Autoscaling policy
 
 resource "aws_autoscaling_policy" "autoscaling-policy-scale-up" {
-  name                   = "${var.APP_NAME}-${var.ENV}-autoscaling-policy-scale-up"
+  name                   = "${var.APP_NAME}-autoscaling-policy-scale-up-${var.ENV}"
   autoscaling_group_name = aws_autoscaling_group.ecs-autoscaling-group.name
   adjustment_type        = "ChangeInCapacity"
   scaling_adjustment     = 1
@@ -42,7 +42,7 @@ resource "aws_autoscaling_policy" "autoscaling-policy-scale-up" {
 }
 
 resource "aws_autoscaling_policy" "autoscaling-policy-scale-down" {
-  name                   = "${var.APP_NAME}-${var.ENV}-autoscaling-policy-down"
+  name                   = "${var.APP_NAME}-autoscaling-policy-down-${var.ENV}"
   autoscaling_group_name = aws_autoscaling_group.ecs-autoscaling-group.name
   adjustment_type        = "ChangeInCapacity"
   scaling_adjustment     = -1
@@ -53,19 +53,19 @@ resource "aws_autoscaling_policy" "autoscaling-policy-scale-down" {
 # Application load balancer
 
 resource "aws_alb" "ecs-load-balancer" {
-  name            = "${var.APP_NAME}-${var.ENV}-load-balancer"
+  name            = "${var.APP_NAME}-load-balancer-${var.ENV}"
   security_groups = var.ELB_SECURITY_GROUPS
   subnets         = var.SUBNETS
 
   tags = {
-    Name = "${var.APP_NAME}-${var.ENV}-load-balancer"
+    Name = "${var.APP_NAME}-load-balancer-${var.ENV}"
   }
 }
 
 # ALB target group
 
 resource "aws_alb_target_group" "ecs-target-group" {
-  name       = "${var.APP_NAME}-${var.ENV}-target-group"
+  name       = "${var.APP_NAME}-target-group-${var.ENV}"
   port       = "80"
   protocol   = "HTTP"
   vpc_id     = var.VPC_ID
@@ -83,7 +83,7 @@ resource "aws_alb_target_group" "ecs-target-group" {
   }
 
   tags = {
-    Name = "${var.APP_NAME}-${var.ENV}-target-group"
+    Name = "${var.APP_NAME}-target-group-${var.ENV}"
   }
 }
 

@@ -1,7 +1,7 @@
 # Log group
 
 resource "aws_cloudwatch_log_group" "cloudwatch-group" {
-  name = "${var.APP_NAME}-${var.ENV}-log-group"
+  name = "${var.APP_NAME}-log-group-${var.ENV}"
 
   tags = {
     Environment = var.ENV
@@ -12,7 +12,7 @@ resource "aws_cloudwatch_log_group" "cloudwatch-group" {
 # Alarms
 
 resource "aws_cloudwatch_metric_alarm" "cpu-alarm-high" {
-  alarm_name          = "${var.APP_NAME}-${var.ENV}-cpu-alarm-high"
+  alarm_name          = "${var.APP_NAME}-cpu-alarm-high-${var.ENV}"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 2
   metric_name         = "CPUUtilization"
@@ -29,7 +29,7 @@ resource "aws_cloudwatch_metric_alarm" "cpu-alarm-high" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "cpu-alarm-low" {
-  alarm_name          = "${var.APP_NAME}-${var.ENV}-cpu-alarm-low"
+  alarm_name          = "${var.APP_NAME}-cpu-alarm-low-${var.ENV}"
   comparison_operator = "LessThanOrEqualToThreshold"
   evaluation_periods  = 2
   metric_name         = "CPUUtilization"
@@ -46,7 +46,7 @@ resource "aws_cloudwatch_metric_alarm" "cpu-alarm-low" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "errors-5xx" {
-  alarm_name                = "${var.APP_NAME}-${var.ENV}-5xx-errors-high"
+  alarm_name                = "${var.APP_NAME}-5xx-errors-high-${var.ENV}"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 2
   threshold                 = 0.1

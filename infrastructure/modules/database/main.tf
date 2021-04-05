@@ -1,11 +1,11 @@
 resource "aws_db_subnet_group" "db-subnet" {
-  name        = "${var.APP_NAME}-${var.ENV}-db-subnet-group"
+  name        = "${var.APP_NAME}-db-subnet-group-${var.ENV}"
   description = "RDS subnet group"
   subnet_ids  = var.DB_SUBNETS
 }
 
 resource "aws_db_parameter_group" "db-parameters" {
-  name        = "${var.APP_NAME}-${var.ENV}-db-parameters"
+  name        = "${var.APP_NAME}-db-parameters-${var.ENV}"
   family      = "postgres12"
   description = "RDS parameter group"
 }
@@ -16,7 +16,7 @@ resource "aws_db_instance" "db" {
   engine                  = "postgres"
   engine_version          = "12.5"
   instance_class          = "db.t2.micro"
-  identifier              = "${var.APP_NAME}-${var.ENV}-db"
+  identifier              = "${var.APP_NAME}-db-${var.ENV}"
   name                    = var.DB_NAME
   username                = var.DB_USERNAME
   password                = var.DB_PASSWORD
@@ -30,6 +30,6 @@ resource "aws_db_instance" "db" {
   skip_final_snapshot     = true
 
   tags = {
-    Name = "${var.APP_NAME}-${var.ENV}-db"
+    Name = "${var.APP_NAME}-db-${var.ENV}"
   }
 }
