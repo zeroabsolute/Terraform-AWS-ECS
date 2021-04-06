@@ -58,3 +58,11 @@ variable "SNS_EMAIL_RECEIVER" {
 variable "SNS_STACK_NAME" {
   default = "sns-stack-102947586"
 }
+
+variable "HOSTED_ZONE_ID" {
+  default = ""
+}
+
+variable "DOMAIN" {
+  default = ""
+}

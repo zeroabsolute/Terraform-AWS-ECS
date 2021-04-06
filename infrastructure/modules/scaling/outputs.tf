@@ -17,3 +17,11 @@ output "ecs-autoscaling-group-name" {
 output "alb-arn-suffix" {
   value = aws_alb.ecs-load-balancer.arn_suffix
 }
+
+output "alb-dns-name" {
+  value = aws_alb.ecs-load-balancer.dns_name
+}
+
+output "alb-zone-id" {
+  value = aws_alb.ecs-load-balancer.zone_id
+}

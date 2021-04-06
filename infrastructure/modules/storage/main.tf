@@ -1,7 +1,7 @@
 # Client web
 
 resource "aws_s3_bucket" "web-client" {
-  bucket        = "${var.APP_NAME}-web-client-${var.ENV}"
+  bucket        = "${var.APP_NAME}-${var.ENV}.${var.DOMAIN}"
   acl           = "public-read"
   force_destroy = true
 
@@ -39,7 +39,7 @@ resource "aws_s3_bucket_policy" "web-client-bucket-policy" {
 # Admin web
 
 resource "aws_s3_bucket" "web-admin" {
-  bucket        = "${var.APP_NAME}-web-admin-${var.ENV}"
+  bucket        = "admin-${var.APP_NAME}-${var.ENV}.${var.DOMAIN}"
   acl           = "public-read"
   force_destroy = true
 

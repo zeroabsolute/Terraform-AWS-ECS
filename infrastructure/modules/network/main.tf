@@ -1,3 +1,5 @@
+# VPC
+
 resource "aws_vpc" "main" {
   cidr_block           = "10.0.0.0/16"
   instance_tenancy     = "default"
@@ -8,6 +10,8 @@ resource "aws_vpc" "main" {
     Name = "${var.APP_NAME}-vpc-${var.ENV}"
   }
 }
+
+# Subnets
 
 resource "aws_subnet" "main-public-subnets" {
   for_each = var.SUBNETS
@@ -20,6 +24,8 @@ resource "aws_subnet" "main-public-subnets" {
     Name = "${var.APP_NAME}-subnet-${each.value}-${var.ENV}"
   }
 }
+
+# Internet gateway
 
 resource "aws_internet_gateway" "main-gateway" {
   vpc_id = aws_vpc.main.id
@@ -46,4 +52,39 @@ resource "aws_route_table_association" "table-association" {
 
   subnet_id      = each.value.id
   route_table_id = aws_route_table.main-route-table.id
+}
+
+# Route 53
+
+resource "aws_route53_record" "api" {
+  zone_id = var.HOSTED_ZONE_ID # created manually beforehand
+  name    = "api-${var.APP_NAME}-${var.ENV}.${var.DOMAIN}"
+  type    = "A"
+  alias {
+    name                   = var.API_RECORD_ADDRESS
+    zone_id                = var.API_ZONE_ID
+    evaluate_target_health = true
+  }
+}
+
+resource "aws_route53_record" "web-client" {
+  zone_id = var.HOSTED_ZONE_ID
+  name    = "${var.APP_NAME}-${var.ENV}.${var.DOMAIN}"
+  type    = "A"
+  alias {
+    name                   = var.WEB_CLIENT_RECORD_ADDRESS
+    zone_id                = var.WEB_CLIENT_HOSTED_ZONE
+    evaluate_target_health = true
+  }
+}
+
+resource "aws_route53_record" "web-admin" {
+  zone_id = var.HOSTED_ZONE_ID
+  name    = "admin-${var.APP_NAME}-${var.ENV}.${var.DOMAIN}"
+  type    = "A"
+  alias {
+    name                   = var.WEB_ADMIN_RECORD_ADDRESS
+    zone_id                = var.WEB_ADMIN_HOSTED_ZONE
+    evaluate_target_health = true
+  }
 }

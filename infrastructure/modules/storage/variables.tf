@@ -5,3 +5,7 @@ variable "APP_NAME" {
 variable "ENV" {
   type = string
 }
+
+variable "DOMAIN" {
+  type = string
+}
