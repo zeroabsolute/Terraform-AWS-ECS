@@ -14,4 +14,4 @@
 
 ## Infrastructure
 
-_TODO_
+![Infrastructure](notes/AWS.jpg)
