@@ -111,25 +111,11 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ${{ needs.terraform.outputs.ECR_REPOSITORY_NAME_DEV }}
-          IMAGE_TAG: ${{ github.sha }}
+          IMAGE_TAG: latest
         run: |
           docker build -t "${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}" ./api
           docker push "${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}"
           echo "::set-output name=image::${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}"
-      - name: Fill in the new image ID in the Amazon ECS task definition
-        id: task-def
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: ./infrastructure/modules/containers/templates/app.json.tpl
-          container-name: ${{ needs.terraform.outputs.ECS_APP_NAME_DEV }}
-          image: ${{ steps.build-image.outputs.image }}
-      - name: Deploy Amazon ECS task definition
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-        with:
-          task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: ${{ needs.terraform.outputs.ECS_SERVICE_NAME_DEV }}
-          cluster: ${{ needs.terraform.outputs.ECS_CLUSTER_NAME_DEV }}
-          wait-for-service-stability: true
   build_web_client:
     name: 'Build Web Client'
     runs-on: ubuntu-latest
