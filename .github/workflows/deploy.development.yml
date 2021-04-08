@@ -70,26 +70,31 @@ jobs:
           web_admin_bucket_dev=$(terraform output WEB_ADMIN_BUCKET_DEV)
           web_client_domain_dev=$(terraform output WEB_CLIENT_DOMAIN_DEV)
           web_admin_domain_dev=$(terraform output WEB_ADMIN_DOMAIN_DEV)
-          ecr_repository_name=$(terraform output ECR_REPOSITORY_NAME)
+          ecr_repository_name=$(terraform output ECR_REPOSITORY_NAME_DEV)
+          ecs_app_name=$(terraform output ECS_APP_NAME_DEV)
+          ecs_service_name=$(terraform output ECS_SERVICE_NAME_DEV)
+          ecs_cluster_name=$(terraform output ECS_CLUSTER_NAME_DEV)
           echo "::set-output name=WEB_CLIENT_BUCKET_DEV::${web_client_bucket_dev}"
           echo "::set-output name=WEB_ADMIN_BUCKET_DEV::${web_admin_bucket_dev}"
           echo "::set-output name=WEB_CLIENT_DOMAIN_DEV::${web_client_domain_dev}"
           echo "::set-output name=WEB_ADMIN_DOMAIN_DEV::${web_admin_domain_dev}"
           echo "::set-output name=ECR_REPOSITORY_NAME_DEV::${ecr_repository_name}"
+          echo "::set-output name=ECS_APP_NAME_DEV::${ecs_app_name}"
+          echo "::set-output name=ECS_SERVICE_NAME_DEV::${ecs_service_name}"
+          echo "::set-output name=ECS_CLUSTER_NAME_DEV::${ecs_cluster_name}"
     outputs:
       WEB_CLIENT_DOMAIN_DEV: ${{ steps.output.outputs.WEB_CLIENT_DOMAIN_DEV }}
       WEB_ADMIN_DOMAIN_DEV: ${{ steps.output.outputs.WEB_ADMIN_DOMAIN_DEV }}
       WEB_CLIENT_BUCKET_DEV: ${{ steps.output.outputs.WEB_CLIENT_BUCKET_DEV }}
       WEB_ADMIN_BUCKET_DEV: ${{ steps.output.outputs.WEB_ADMIN_BUCKET_DEV }}
       ECR_REPOSITORY_NAME_DEV: ${{ steps.output.outputs.ECR_REPOSITORY_NAME_DEV }}
+      ECS_APP_NAME_DEV: ${{ steps.output.outputs.ECS_APP_NAME_DEV }}
+      ECS_SERVICE_NAME_DEV: ${{ steps.output.outputs.ECS_SERVICE_NAME_DEV }}
+      ECS_CLUSTER_NAME_DEV: ${{ steps.output.outputs.ECS_CLUSTER_NAME_DEV }}
   build_api:
     name: 'Build API'
     runs-on: ubuntu-latest
     needs: terraform
-    defaults:
-      run:
-        shell: bash
-        working-directory: api
     steps:
       - uses: actions/checkout@v2
       - name: Configure AWS Credentials
@@ -102,9 +107,29 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
       - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ needs.terraform.outputs.ECR_REPOSITORY_NAME_DEV }}
+          IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -t "${{ steps.login-ecr.outputs.registry }}/${{ needs.terraform.outputs.ECR_REPOSITORY_NAME_DEV }}:${{ github.sha }}" .
-          docker push "${{ steps.login-ecr.outputs.registry }}/${{ needs.terraform.outputs.ECR_REPOSITORY_NAME_DEV }}:${{ github.sha }}"
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./api
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ./infrastructure/modules/containers/templates/app.json.tpl
+          container-name: ${{ needs.terraform.outputs.ECS_APP_NAME_DEV }}
+          image: ${{ steps.build-image.outputs.image }}
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ needs.terraform.outputs.ECS_SERVICE_NAME_DEV }}
+          cluster: ${{ needs.terraform.outputs.ECS_CLUSTER_NAME_DEV }}
+          wait-for-service-stability: true
   build_web_client:
     name: 'Build Web Client'
     runs-on: ubuntu-latest
