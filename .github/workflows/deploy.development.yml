@@ -71,26 +71,20 @@ jobs:
           web_client_domain_dev=$(terraform output WEB_CLIENT_DOMAIN_DEV)
           web_admin_domain_dev=$(terraform output WEB_ADMIN_DOMAIN_DEV)
           ecr_repository_name=$(terraform output ECR_REPOSITORY_NAME_DEV)
-          ecs_app_name=$(terraform output ECS_APP_NAME_DEV)
-          ecs_service_name=$(terraform output ECS_SERVICE_NAME_DEV)
-          ecs_cluster_name=$(terraform output ECS_CLUSTER_NAME_DEV)
+          alb_domain_name=$(terraform output ALB_DOMAIN_NAME_DEV)
           echo "::set-output name=WEB_CLIENT_BUCKET_DEV::${web_client_bucket_dev}"
           echo "::set-output name=WEB_ADMIN_BUCKET_DEV::${web_admin_bucket_dev}"
           echo "::set-output name=WEB_CLIENT_DOMAIN_DEV::${web_client_domain_dev}"
           echo "::set-output name=WEB_ADMIN_DOMAIN_DEV::${web_admin_domain_dev}"
           echo "::set-output name=ECR_REPOSITORY_NAME_DEV::${ecr_repository_name}"
-          echo "::set-output name=ECS_APP_NAME_DEV::${ecs_app_name}"
-          echo "::set-output name=ECS_SERVICE_NAME_DEV::${ecs_service_name}"
-          echo "::set-output name=ECS_CLUSTER_NAME_DEV::${ecs_cluster_name}"
+          echo "::set-output name=ALB_DOMAIN_NAME_DEV::${alb_domain_name}"
     outputs:
       WEB_CLIENT_DOMAIN_DEV: ${{ steps.output.outputs.WEB_CLIENT_DOMAIN_DEV }}
       WEB_ADMIN_DOMAIN_DEV: ${{ steps.output.outputs.WEB_ADMIN_DOMAIN_DEV }}
       WEB_CLIENT_BUCKET_DEV: ${{ steps.output.outputs.WEB_CLIENT_BUCKET_DEV }}
       WEB_ADMIN_BUCKET_DEV: ${{ steps.output.outputs.WEB_ADMIN_BUCKET_DEV }}
       ECR_REPOSITORY_NAME_DEV: ${{ steps.output.outputs.ECR_REPOSITORY_NAME_DEV }}
-      ECS_APP_NAME_DEV: ${{ steps.output.outputs.ECS_APP_NAME_DEV }}
-      ECS_SERVICE_NAME_DEV: ${{ steps.output.outputs.ECS_SERVICE_NAME_DEV }}
-      ECS_CLUSTER_NAME_DEV: ${{ steps.output.outputs.ECS_CLUSTER_NAME_DEV }}
+      ALB_DOMAIN_NAME_DEV: ${{ steps.output.outputs.ALB_DOMAIN_NAME_DEV }}
   build_api:
     name: 'Build API'
     runs-on: ubuntu-latest
@@ -133,7 +127,10 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
       - name: Build React App
-        run: npm install && npm run build
+        run: |
+          npm install
+          export REACT_APP_SERVER_URL=${{ needs.terraform.outputs.ECR_REPOSITORY_NAME_DEV }}
+          npm run build
       - name: Deploy app build to S3 bucket
         run: aws s3 sync ./build/ s3://${{ needs.terraform.outputs.WEB_CLIENT_BUCKET_DEV }} --delete
   build_web_admin:
@@ -153,6 +150,9 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
       - name: Build React App
-        run: npm install && npm run build
+        run: |
+          npm install
+          export REACT_APP_SERVER_URL=${{ needs.terraform.outputs.ECR_REPOSITORY_NAME_DEV }}
+          npm run build
       - name: Deploy app build to S3 bucket
         run: aws s3 sync ./build/ s3://${{ needs.terraform.outputs.WEB_ADMIN_BUCKET_DEV }} --delete

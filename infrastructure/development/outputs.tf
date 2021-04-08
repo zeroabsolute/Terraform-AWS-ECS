@@ -29,3 +29,7 @@ output "ECS_SERVICE_NAME_DEV" {
 output "ECS_CLUSTER_NAME_DEV" {
   value = module.ecs-service.ecs-cluster-name
 }
+
+output "ALB_DOMAIN_NAME_DEV" {
+  value = module.scaling.alb-dns-name
+}
