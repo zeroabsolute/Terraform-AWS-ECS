@@ -14,6 +14,22 @@ output "WEB_ADMIN_BUCKET_PROD" {
   value = module.storage.web-admin-bucket-name
 }
 
-output "ECR_REPOSITORY_NAME" {
+output "ECR_REPOSITORY_NAME_PROD" {
   value = module.ecs-service.ecr-repository-name
+}
+
+output "ECS_APP_NAME_PROD" {
+  value = module.ecs-service.ecs-app-name
+}
+
+output "ECS_SERVICE_NAME_PROD" {
+  value = module.ecs-service.ecs-service-name
+}
+
+output "ECS_CLUSTER_NAME_PROD" {
+  value = module.ecs-service.ecs-cluster-name
+}
+
+output "ALB_DOMAIN_NAME_PROD" {
+  value = module.scaling.alb-dns-name
 }

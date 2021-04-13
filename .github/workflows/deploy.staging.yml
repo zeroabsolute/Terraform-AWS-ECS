@@ -1,4 +1,4 @@
-name: Deploy to Staging
+name: 'Deploy to Staging'
 
 on:
   push:
@@ -15,13 +15,14 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: infrastructure/staging
+        working-directory: infrastructure/staginguction
     steps:
       - uses: actions/checkout@v2
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
           cli_config_credentials_token: ${{ secrets.TF_API_KEY }}
+          terraform_wrapper: false
       - name: Terraform Format
         id: fmt
         run: terraform fmt -check
@@ -61,3 +62,97 @@ jobs:
       - name: Terraform Apply
         if: github.event_name == 'push'
         run: terraform apply -auto-approve
+      - name: Terraform Output
+        id: output
+        if: github.event_name == 'push'
+        run: |
+          web_client_bucket_staging=$(terraform output WEB_CLIENT_BUCKET_STAGING)
+          web_admin_bucket_staging=$(terraform output WEB_ADMIN_BUCKET_STAGING)
+          web_client_domain_staging=$(terraform output WEB_CLIENT_DOMAIN_STAGING)
+          web_admin_domain_staging=$(terraform output WEB_ADMIN_DOMAIN_STAGING)
+          ecr_repository_name=$(terraform output ECR_REPOSITORY_NAME_STAGING)
+          alb_domain_name=$(terraform output ALB_DOMAIN_NAME_STAGING)
+          echo "::set-output name=WEB_CLIENT_BUCKET_STAGING::${web_client_bucket_staging}"
+          echo "::set-output name=WEB_ADMIN_BUCKET_STAGING::${web_admin_bucket_staging}"
+          echo "::set-output name=WEB_CLIENT_DOMAIN_STAGING::${web_client_domain_staging}"
+          echo "::set-output name=WEB_ADMIN_DOMAIN_STAGING::${web_admin_domain_staging}"
+          echo "::set-output name=ECR_REPOSITORY_NAME_STAGING::${ecr_repository_name}"
+          echo "::set-output name=ALB_DOMAIN_NAME_STAGING::${alb_domain_name}"
+    outputs:
+      WEB_CLIENT_DOMAIN_STAGING: ${{ steps.output.outputs.WEB_CLIENT_DOMAIN_STAGING }}
+      WEB_ADMIN_DOMAIN_STAGING: ${{ steps.output.outputs.WEB_ADMIN_DOMAIN_STAGING }}
+      WEB_CLIENT_BUCKET_STAGING: ${{ steps.output.outputs.WEB_CLIENT_BUCKET_STAGING }}
+      WEB_ADMIN_BUCKET_STAGING: ${{ steps.output.outputs.WEB_ADMIN_BUCKET_STAGING }}
+      ECR_REPOSITORY_NAME_STAGING: ${{ steps.output.outputs.ECR_REPOSITORY_NAME_STAGING }}
+      ALB_DOMAIN_NAME_STAGING: ${{ steps.output.outputs.ALB_DOMAIN_NAME_STAGING }}
+  build_api:
+    name: 'Build API'
+    runs-on: ubuntu-latest
+    needs: terraform
+    steps:
+      - uses: actions/checkout@v2
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ needs.terraform.outputs.ECR_REPOSITORY_NAME_STAGING }}
+          IMAGE_TAG: latest
+        run: |
+          docker build -t "${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}" ./api
+          docker push "${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}"
+          echo "::set-output name=image::${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}"
+  build_web_client:
+    name: 'Build Web Client'
+    runs-on: ubuntu-latest
+    needs: terraform
+    defaults:
+      run:
+        shell: bash
+        working-directory: web_client
+    steps:
+      - uses: actions/checkout@v2
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      - name: Build React App
+        run: |
+          npm install
+          export REACT_APP_SERVER_URL=http://${{ needs.terraform.outputs.ALB_DOMAIN_NAME_STAGING }}
+          npm run build
+      - name: Deploy app build to S3 bucket
+        run: aws s3 sync ./build/ s3://${{ needs.terraform.outputs.WEB_CLIENT_BUCKET_STAGING }} --delete
+  build_web_admin:
+    name: 'Build Web Admin'
+    runs-on: ubuntu-latest
+    needs: terraform
+    defaults:
+      run:
+        shell: bash
+        working-directory: web_admin
+    steps:
+      - uses: actions/checkout@v2
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      - name: Build React App
+        run: |
+          npm install
+          export REACT_APP_SERVER_URL=http://${{ needs.terraform.outputs.ALB_DOMAIN_NAME_STAGING }}
+          npm run build
+      - name: Deploy app build to S3 bucket
+        run: aws s3 sync ./build/ s3://${{ needs.terraform.outputs.WEB_ADMIN_BUCKET_STAGING }} --delete

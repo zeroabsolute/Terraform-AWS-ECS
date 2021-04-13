@@ -16,7 +16,7 @@ variable "APP_NAME" {
 }
 
 variable "ENV" {
-  default = "development"
+  default = "staging"
 }
 
 variable "ECS_AMI_ID" {
@@ -48,7 +48,7 @@ variable "DB_PASSWORD" {
 }
 
 variable "DB_NAME" {
-  default = "stag"
+  default = "dev"
 }
 
 variable "SNS_EMAIL_RECEIVER" {
@@ -56,5 +56,13 @@ variable "SNS_EMAIL_RECEIVER" {
 }
 
 variable "SNS_STACK_NAME" {
-  default = "sns-stack-820394718"
+  default = "sns-stack-102947586"
+}
+
+variable "HOSTED_ZONE_ID" {
+  default = ""
+}
+
+variable "DOMAIN" {
+  default = ""
 }
