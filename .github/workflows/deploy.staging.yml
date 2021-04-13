@@ -15,7 +15,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: infrastructure/staginguction
+        working-directory: infrastructure/staging
     steps:
       - uses: actions/checkout@v2
       - name: Setup Terraform
