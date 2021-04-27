@@ -64,7 +64,6 @@ jobs:
         run: terraform apply -auto-approve
       - name: Terraform Output
         id: output
-        if: github.event_name == 'push'
         run: |
           web_client_bucket_prod=$(terraform output WEB_CLIENT_BUCKET_PROD)
           web_admin_bucket_prod=$(terraform output WEB_ADMIN_BUCKET_PROD)
