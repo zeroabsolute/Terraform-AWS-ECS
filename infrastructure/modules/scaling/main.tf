@@ -20,7 +20,7 @@ resource "aws_autoscaling_group" "ecs-autoscaling-group" {
   name                 = "${var.APP_NAME}-autoscaling-group-${var.ENV}"
   vpc_zone_identifier  = var.SUBNETS
   launch_configuration = aws_launch_configuration.launch-config.name
-  min_size             = 1
+  min_size             = "test"
   max_size             = var.ASG_MAX_SIZE
 
   tag {
