@@ -1,8 +1,8 @@
 # VPC; Subnets
 
 module "network" {
-  source                    = "../modules/network"
-  APP_NAME                  = var.APP_NAME
+  source = "../modules/network"
+  APP_NAME = var.APP_NAME
   ENV                       = var.ENV
   AWS_REGION                = var.AWS_REGION
   HOSTED_ZONE_ID            = var.HOSTED_ZONE_ID
